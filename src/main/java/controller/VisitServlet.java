@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @WebServlet("/visits")
 public class VisitServlet extends HttpServlet {
@@ -18,15 +17,7 @@ public class VisitServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html");
-        PrintWriter writer = response.getWriter();
-        try {
-            writer.println("<h2>Журнал посещений</h2>");
-            writer.println("<p>Здесь будет отображаться список посещений</p>");
-            writer.println("<a href='/computer_club/'>На главную</a>");
-        } finally {
-            writer.close();
-        }
+        request.getRequestDispatcher("/views/visits.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
