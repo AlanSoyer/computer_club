@@ -1,12 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="domain.ComputerStatus" %>
-
-<%
-    ComputerStatus s1 = new ComputerStatus(1L, "Работает");
-    ComputerStatus s2 = new ComputerStatus(2L, "В ремонте");
-    ComputerStatus s3 = new ComputerStatus(3L, "Свободен");
-    ComputerStatus[] statuses = new ComputerStatus[]{s1, s2, s3};
-%>
+<%@ page import="java.util.List, domain.ComputerStatus" %>
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -22,19 +15,25 @@
 
         <div class="container mt-4">
             <h2 class="mb-4 text-center">Список статусов</h2>
+
+            <% List<ComputerStatus> statuses = (List<ComputerStatus>) request.getAttribute("statuses"); %>
+
             <table class="table table-bordered table-striped table-hover">
                 <thead class="table-dark">
                     <tr>
-                        <th>Код</th>
+                        <th>ID</th>
                         <th>Статус</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% for (ComputerStatus s : statuses) { %>
+                    <% if (statuses != null && !statuses.isEmpty()) {
+                        for (ComputerStatus s : statuses) { %>
                     <tr>
                         <td><%= s.getId() %></td>
                         <td><%= s.getStatusName() %></td>
                     </tr>
+                    <% } } else { %>
+                    <tr><td colspan="2" class="text-center">Нет данных</td></tr>
                     <% } %>
                 </tbody>
             </table>
@@ -42,10 +41,9 @@
 
         <div class="container mt-5">
             <h3 class="mb-3">Новый статус</h3>
-            <form method="POST" action="#" class="border p-4 bg-light rounded w-50 mx-auto">
+            <form method="POST" action="/computer_club/statuses" class="border p-4 bg-light rounded w-50 mx-auto">
                 <div class="mb-3">
-                    <label class="form-label">Наименование статуса</label>
-                    <input type="text" name="statusName" class="form-control">
+                    <input type="text" name="statusName" class="form-control" placeholder="Название статуса" required>
                 </div>
                 <button type="submit" class="btn btn-info text-white">Добавить</button>
             </form>
@@ -53,7 +51,5 @@
 
         <jsp:include page="/views/footer.jsp" />
     </div>
-    <script src="/computer_club/js/jquery-3.6.4.js"></script>
-    <script src="/computer_club/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

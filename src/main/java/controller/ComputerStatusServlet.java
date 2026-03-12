@@ -18,54 +18,36 @@ public class ComputerStatusServlet extends HttpServlet {
 
     public ComputerStatusServlet() {
         super();
-        System.out.println("✅ ComputerStatusServlet создан");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("➡️ ComputerStatusServlet doGet вызван");
-        
         try {
-            System.out.println("➡️ Создаём DAO...");
             ComputerStatusDbDAO dao = new ComputerStatusDbDAO();
-            
-            System.out.println("➡️ Загружаем статусы...");
             List<ComputerStatus> statuses = dao.findAll();
-            System.out.println("✅ Загружено статусов: " + statuses.size());
-            
             request.setAttribute("statuses", statuses);
-            
         } catch (DAOException e) {
-            System.out.println("❌ Ошибка DAO: " + e.getMessage());
-            e.printStackTrace();
-        } catch (Exception e) {
-            System.out.println("❌ Другая ошибка: " + e.getMessage());
             e.printStackTrace();
         }
-        
         request.getRequestDispatcher("/views/computerStatuses.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("📥 ComputerStatusServlet doPost вызван");
         
+        String statusName = request.getParameter("statusName");
+
+        ComputerStatus status = new ComputerStatus();
+        status.setStatusName(statusName);
+
         try {
-            String statusName = request.getParameter("statusName");
-            System.out.println("Получен статус: " + statusName);
-            
-            ComputerStatus status = new ComputerStatus();
-            status.setStatusName(statusName);
-            
             ComputerStatusDbDAO dao = new ComputerStatusDbDAO();
             Long id = dao.insert(status);
-            System.out.println("✅ Добавлен статус с id = " + id);
-            
-        } catch (Exception e) {
-            System.out.println("❌ Ошибка в doPost: " + e.getMessage());
+            System.out.println("Добавлен статус с id: " + id);
+        } catch (DAOException e) {
             e.printStackTrace();
         }
-        
-        doGet(request, response);
+
+        response.sendRedirect(request.getContextPath() + "/statuses");
     }
 }

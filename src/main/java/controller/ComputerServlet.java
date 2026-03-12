@@ -20,45 +20,45 @@ public class ComputerServlet extends HttpServlet {
 
     public ComputerServlet() {
         super();
-        System.out.println("✅ ComputerServlet создан");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("➡️ ComputerServlet doGet вызван");
-        
         try {
-            System.out.println("➡️ Создаём DAO для компьютеров...");
             ComputerDbDAO computerDao = new ComputerDbDAO();
-            
-            System.out.println("➡️ Создаём DAO для статусов...");
             ComputerStatusDbDAO statusDao = new ComputerStatusDbDAO();
             
-            System.out.println("➡️ Загружаем список компьютеров...");
             List<Computer> computers = computerDao.findAll();
-            System.out.println("✅ Загружено компьютеров: " + computers.size());
-            
-            System.out.println("➡️ Загружаем список статусов...");
             List<ComputerStatus> statuses = statusDao.findAll();
-            System.out.println("✅ Загружено статусов: " + statuses.size());
             
             request.setAttribute("computers", computers);
             request.setAttribute("statuses", statuses);
-            
         } catch (DAOException e) {
-            System.out.println("❌ Ошибка DAO: " + e.getMessage());
-            e.printStackTrace();
-        } catch (Exception e) {
-            System.out.println("❌ Другая ошибка: " + e.getMessage());
             e.printStackTrace();
         }
-        
         request.getRequestDispatcher("/views/computers.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("📥 ComputerServlet doPost вызван");
-        doGet(request, response);
+        
+        String computerName = request.getParameter("computerName");
+        String description = request.getParameter("description");
+        Long statusId = Long.parseLong(request.getParameter("statusId"));
+
+        Computer computer = new Computer();
+        computer.setComputerName(computerName);
+        computer.setDescription(description);
+        computer.setStatusId(statusId);
+
+        try {
+            ComputerDbDAO dao = new ComputerDbDAO();
+            Long id = dao.insert(computer);
+            System.out.println("Добавлен компьютер с id: " + id);
+        } catch (DAOException e) {
+            e.printStackTrace();
+        }
+
+        response.sendRedirect(request.getContextPath() + "/computers");
     }
 }

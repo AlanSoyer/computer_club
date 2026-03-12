@@ -1,12 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="domain.Computer, domain.ComputerStatus" %>
-
-<%
-    ComputerStatus s1 = new ComputerStatus(1L, "Работает");
-    Computer c1 = new Computer(1L, "PC-01", "Intel i5, 16GB RAM", 1L, s1);
-    Computer c2 = new Computer(2L, "PC-02", "Intel i7, 32GB RAM", 1L, s1);
-    Computer[] computers = new Computer[]{c1, c2};
-%>
+<%@ page import="java.util.List, domain.Computer, domain.ComputerStatus" %>
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -22,23 +15,29 @@
 
         <div class="container mt-4">
             <h2 class="mb-4 text-center">Список компьютеров</h2>
+
+            <% List<Computer> computers = (List<Computer>) request.getAttribute("computers"); %>
+
             <table class="table table-bordered table-striped table-hover">
                 <thead class="table-dark">
                     <tr>
-                        <th>Код</th>
+                        <th>ID</th>
                         <th>Название</th>
                         <th>Описание</th>
                         <th>Статус</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% for (Computer c : computers) { %>
+                    <% if (computers != null && !computers.isEmpty()) {
+                        for (Computer c : computers) { %>
                     <tr>
                         <td><%= c.getId() %></td>
                         <td><%= c.getComputerName() %></td>
                         <td><%= c.getDescription() %></td>
                         <td><%= c.getStatusName() %></td>
                     </tr>
+                    <% } } else { %>
+                    <tr><td colspan="4" class="text-center">Нет данных</td></tr>
                     <% } %>
                 </tbody>
             </table>
@@ -46,15 +45,19 @@
 
         <div class="container mt-5">
             <h3 class="mb-3">Новый компьютер</h3>
-            <form method="POST" action="#" class="border p-4 bg-light rounded">
+            <form method="POST" action="/computer_club/computers" class="border p-4 bg-light rounded">
                 <div class="row">
+                    <div class="col-md-6 mb-3"><input type="text" name="computerName" class="form-control" placeholder="Название" required></div>
+                    <div class="col-md-6 mb-3"><input type="text" name="description" class="form-control" placeholder="Описание"></div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Название</label>
-                        <input type="text" name="computerName" class="form-control">
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Описание</label>
-                        <input type="text" name="description" class="form-control">
+                        <select name="statusId" class="form-control" required>
+                            <option value="">Выберите статус</option>
+                            <% List<ComputerStatus> statuses = (List<ComputerStatus>) request.getAttribute("statuses");
+                               if (statuses != null) {
+                                   for (ComputerStatus s : statuses) { %>
+                            <option value="<%= s.getId() %>"><%= s.getStatusName() %></option>
+                            <% } } %>
+                        </select>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-success">Добавить</button>
@@ -63,7 +66,5 @@
 
         <jsp:include page="/views/footer.jsp" />
     </div>
-    <script src="/computer_club/js/jquery-3.6.4.js"></script>
-    <script src="/computer_club/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

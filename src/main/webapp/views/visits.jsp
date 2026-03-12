@@ -1,15 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="domain.Visit, domain.Visitor, domain.Computer, domain.ComputerStatus, java.time.LocalDate" %>
-
-<%
-    ComputerStatus s1 = new ComputerStatus(1L, "Работает");
-    Computer c1 = new Computer(1L, "PC-01", "Intel i5, 16GB RAM", 1L, s1);
-    Visitor v1 = new Visitor(1L, "Иван", "Иванов", "Иванович",
-                              "паспорт 1234", "ул. Ленина, 1", "+7-911-111-11-11");
-
-    Visit visit1 = new Visit(1L, v1, c1, LocalDate.now(), 120, 300.0);
-    Visit[] visits = new Visit[]{visit1};
-%>
+<%@ page import="java.util.List, domain.Visit, domain.Visitor, domain.Computer" %>
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -25,10 +15,15 @@
 
         <div class="container mt-4">
             <h2 class="mb-4 text-center">Журнал посещений</h2>
+
+            <%
+                List<Visit> visits = (List<Visit>) request.getAttribute("visits");
+            %>
+
             <table class="table table-bordered table-striped table-hover">
                 <thead class="table-dark">
                     <tr>
-                        <th>Код</th>
+                        <th>ID</th>
                         <th>Посетитель</th>
                         <th>Компьютер</th>
                         <th>Дата</th>
@@ -37,23 +32,92 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% for (Visit visit : visits) { %>
+                    <%
+                        if (visits != null && !visits.isEmpty()) {
+                            for (Visit v : visits) {
+                    %>
                     <tr>
-                        <td><%= visit.getId() %></td>
-                        <td><%= visit.getVisitor().getFullName() %></td>
-                        <td><%= visit.getComputer().getComputerName() %></td>
-                        <td><%= visit.getVisitDate() %></td>
-                        <td><%= visit.getFormattedDuration() %></td>
-                        <td><%= visit.getPayment() %></td>
+                        <td><%= v.getId() %></td>
+                        <td>
+                            <% if (v.getVisitor() != null) { %>
+                                <%= v.getVisitor().getFullName() %>
+                            <% } else { %>
+                                <span class="text-muted">—</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if (v.getComputer() != null) { %>
+                                <%= v.getComputer().getComputerName() %>
+                            <% } else { %>
+                                <span class="text-muted">—</span>
+                            <% } %>
+                        </td>
+                        <td><%= v.getVisitDate() %></td>
+                        <td><%= v.getFormattedDuration() %></td>
+                        <td><%= v.getPayment() %></td>
+                    </tr>
+                    <%
+                            }
+                        } else {
+                    %>
+                    <tr>
+                        <td colspan="6" class="text-center">Нет данных</td>
                     </tr>
                     <% } %>
                 </tbody>
             </table>
         </div>
 
+        <div class="container mt-5">
+            <h3 class="mb-3">Новое посещение</h3>
+            <form method="POST" action="/computer_club/visits" class="border p-4 bg-light rounded">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <select name="visitorId" class="form-control" required>
+                            <option value="">Выберите посетителя</option>
+                            <%
+                                List<Visitor> visitors = (List<Visitor>) request.getAttribute("visitors");
+                                if (visitors != null) {
+                                    for (Visitor v : visitors) {
+                            %>
+                            <option value="<%= v.getId() %>"><%= v.getFullName() %></option>
+                            <%
+                                    }
+                                }
+                            %>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <select name="computerId" class="form-control" required>
+                            <option value="">Выберите компьютер</option>
+                            <%
+                                List<Computer> computers = (List<Computer>) request.getAttribute("computers");
+                                if (computers != null) {
+                                    for (Computer c : computers) {
+                            %>
+                            <option value="<%= c.getId() %>"><%= c.getComputerName() %></option>
+                            <%
+                                    }
+                                }
+                            %>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <input type="date" name="visitDate" class="form-control" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <input type="number" name="duration" class="form-control" placeholder="Длительность (мин)" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <input type="text" name="payment" class="form-control" placeholder="Сумма" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Добавить</button>
+            </form>
+        </div>
+
         <jsp:include page="/views/footer.jsp" />
     </div>
-    <script src="/computer_club/js/jquery-3.6.4.js"></script>
     <script src="/computer_club/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

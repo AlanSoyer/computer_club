@@ -102,7 +102,7 @@ public class VisitDbDAO implements RepositoryDAO<Visit> {
              PreparedStatement pst = con.prepareStatement(SELECT_ALL);
              ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
-                list.add(fill(rs));
+                list.add(fillFull(rs));
             }
         } catch (SQLException e) {
             throw new DAOException(e);
@@ -110,7 +110,7 @@ public class VisitDbDAO implements RepositoryDAO<Visit> {
         return list;
     }
 
-    private Visit fill(ResultSet rs) throws SQLException, DAOException {
+    private Visit fill(ResultSet rs) throws SQLException {
         Visit visit = new Visit();
         visit.setId(rs.getLong("id"));
         visit.setVisitorId(rs.getLong("visitor_id"));
