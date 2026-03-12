@@ -16,24 +16,44 @@
         <div class="container mt-4">
             <h2 class="mb-4 text-center">Список статусов</h2>
 
-            <% List<ComputerStatus> statuses = (List<ComputerStatus>) request.getAttribute("statuses"); %>
+            <%
+                List<ComputerStatus> statuses = (List<ComputerStatus>) request.getAttribute("statuses");
+            %>
 
             <table class="table table-bordered table-striped table-hover">
                 <thead class="table-dark">
                     <tr>
                         <th>ID</th>
                         <th>Статус</th>
+                        <th>Редактировать</th>
+                        <th>Удалить</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% if (statuses != null && !statuses.isEmpty()) {
-                        for (ComputerStatus s : statuses) { %>
+                    <%
+                        if (statuses != null && !statuses.isEmpty()) {
+                            for (ComputerStatus s : statuses) {
+                    %>
                     <tr>
                         <td><%= s.getId() %></td>
                         <td><%= s.getStatusName() %></td>
+                        <td>
+                            <a href="/computer_club/editstatus?id=<%= s.getId() %>" 
+                               class="btn btn-sm btn-outline-primary">✏️ Редактировать</a>
+                        </td>
+                        <td>
+                            <a href="/computer_club/deletestatus?id=<%= s.getId() %>" 
+                               class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Удалить статус с кодом <%= s.getId() %>?')">🗑️ Удалить</a>
+                        </td>
                     </tr>
-                    <% } } else { %>
-                    <tr><td colspan="2" class="text-center">Нет данных</td></tr>
+                    <%
+                            }
+                        } else {
+                    %>
+                    <tr>
+                        <td colspan="4" class="text-center">Нет данных</td>
+                    </tr>
                     <% } %>
                 </tbody>
             </table>

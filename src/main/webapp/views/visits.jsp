@@ -29,6 +29,8 @@
                         <th>Дата</th>
                         <th>Длительность</th>
                         <th>Оплата</th>
+                        <th>Редакт.</th>
+                        <th>Удалить</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,86 +40,34 @@
                     %>
                     <tr>
                         <td><%= v.getId() %></td>
-                        <td>
-                            <% if (v.getVisitor() != null) { %>
-                                <%= v.getVisitor().getFullName() %>
-                            <% } else { %>
-                                <span class="text-muted">—</span>
-                            <% } %>
-                        </td>
-                        <td>
-                            <% if (v.getComputer() != null) { %>
-                                <%= v.getComputer().getComputerName() %>
-                            <% } else { %>
-                                <span class="text-muted">—</span>
-                            <% } %>
-                        </td>
+                        <td><%= v.getVisitor().getFullName() %></td>
+                        <td><%= v.getComputer().getComputerName() %></td>
                         <td><%= v.getVisitDate() %></td>
                         <td><%= v.getFormattedDuration() %></td>
                         <td><%= v.getPayment() %></td>
+                        <td>
+                            <a href="/computer_club/editvisit?id=<%= v.getId() %>" 
+                               class="btn btn-sm btn-outline-primary">✏️</a>
+                        </td>
+                        <td>
+                            <a href="/computer_club/deletevisit?id=<%= v.getId() %>" 
+                               class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Удалить посещение с кодом <%= v.getId() %>?')">🗑️</a>
+                        </td>
                     </tr>
                     <%
                             }
                         } else {
                     %>
                     <tr>
-                        <td colspan="6" class="text-center">Нет данных</td>
+                        <td colspan="8" class="text-center">Нет данных</td>
                     </tr>
                     <% } %>
                 </tbody>
             </table>
         </div>
 
-        <div class="container mt-5">
-            <h3 class="mb-3">Новое посещение</h3>
-            <form method="POST" action="/computer_club/visits" class="border p-4 bg-light rounded">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <select name="visitorId" class="form-control" required>
-                            <option value="">Выберите посетителя</option>
-                            <%
-                                List<Visitor> visitors = (List<Visitor>) request.getAttribute("visitors");
-                                if (visitors != null) {
-                                    for (Visitor v : visitors) {
-                            %>
-                            <option value="<%= v.getId() %>"><%= v.getFullName() %></option>
-                            <%
-                                    }
-                                }
-                            %>
-                        </select>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <select name="computerId" class="form-control" required>
-                            <option value="">Выберите компьютер</option>
-                            <%
-                                List<Computer> computers = (List<Computer>) request.getAttribute("computers");
-                                if (computers != null) {
-                                    for (Computer c : computers) {
-                            %>
-                            <option value="<%= c.getId() %>"><%= c.getComputerName() %></option>
-                            <%
-                                    }
-                                }
-                            %>
-                        </select>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <input type="date" name="visitDate" class="form-control" required>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <input type="number" name="duration" class="form-control" placeholder="Длительность (мин)" required>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <input type="text" name="payment" class="form-control" placeholder="Сумма" required>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary">Добавить</button>
-            </form>
-        </div>
-
         <jsp:include page="/views/footer.jsp" />
     </div>
-    <script src="/computer_club/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

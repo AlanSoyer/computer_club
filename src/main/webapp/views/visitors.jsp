@@ -30,6 +30,8 @@
                         <th>Документ</th>
                         <th>Адрес</th>
                         <th>Телефон</th>
+                        <th>Редакт.</th>
+                        <th>Удалить</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,13 +47,22 @@
                         <td><%= v.getIdentityDocument() %></td>
                         <td><%= v.getAddress() %></td>
                         <td><%= v.getPhone() %></td>
+                        <td>
+                            <a href="/computer_club/editvisitor?id=<%= v.getId() %>" 
+                               class="btn btn-sm btn-outline-primary">✏️</a>
+                        </td>
+                        <td>
+                            <a href="/computer_club/deletevisitor?id=<%= v.getId() %>" 
+                               class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Удалить посетителя с кодом <%= v.getId() %>?')">🗑️</a>
+                        </td>
                     </tr>
                     <%
                             }
                         } else {
                     %>
                     <tr>
-                        <td colspan="7" class="text-center">Нет данных</td>
+                        <td colspan="9" class="text-center">Нет данных</td>
                     </tr>
                     <% } %>
                 </tbody>
@@ -63,28 +74,22 @@
             <form method="POST" action="/computer_club/visitors" class="border p-4 bg-light rounded">
                 <div class="row">
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Фамилия</label>
-                        <input type="text" name="lastName" class="form-control" required>
+                        <input type="text" name="lastName" class="form-control" placeholder="Фамилия" required>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Имя</label>
-                        <input type="text" name="firstName" class="form-control" required>
+                        <input type="text" name="firstName" class="form-control" placeholder="Имя" required>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Отчество</label>
-                        <input type="text" name="patronymic" class="form-control">
+                        <input type="text" name="patronymic" class="form-control" placeholder="Отчество">
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Документ</label>
-                        <input type="text" name="identityDocument" class="form-control">
+                        <input type="text" name="identityDocument" class="form-control" placeholder="Документ">
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Адрес</label>
-                        <input type="text" name="address" class="form-control">
+                        <input type="text" name="address" class="form-control" placeholder="Адрес">
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Телефон</label>
-                        <input type="text" name="phone" class="form-control">
+                        <input type="text" name="phone" class="form-control" placeholder="Телефон" required>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Добавить</button>
@@ -93,6 +98,5 @@
 
         <jsp:include page="/views/footer.jsp" />
     </div>
-    <script src="/computer_club/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
